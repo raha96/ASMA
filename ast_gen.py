@@ -1,6 +1,7 @@
 from sys import argv
 from pyverilog.vparser import parser
 from pyverilog.vparser import ast as _ast
+from io import StringIO
 
 def delete_multiline_comment(code:str) -> str:
     first = code.find("/*")
@@ -39,7 +40,7 @@ def traverse_lrvalue(value) -> list:
         return [value.var.name]
     elif type(value.var) in [_ast.IntConst, _ast.Partselect]:
         return []
-    elif type(value.var) in [_ast.Plus, _ast.Minus, _ast.LConcat]:
+    elif type(value.var) in [_ast.Plus, _ast.Minus, _ast.LConcat, _ast.Concat]:
         return _forward_traverse_condition(value.var)
     elif type(value.var) == _ast.Pointer:
         return traverse_lrvalue(value.var)
@@ -49,22 +50,28 @@ def traverse_lrvalue(value) -> list:
 
 def traverse_blocking_substitution(blocking_substitution) -> list:
     subs_tree = []
-    subs_tree.extend(traverse_lrvalue(blocking_substitution.left))
-    subs_tree.extend(traverse_lrvalue(blocking_substitution.right))
+    if blocking_substitution.left:
+        subs_tree.extend(traverse_lrvalue(blocking_substitution.left))
+    if blocking_substitution.right:
+        subs_tree.extend(traverse_lrvalue(blocking_substitution.right))
     return subs_tree
 
 tree_cond = [_ast.Lor, _ast.Eq, _ast.NotEq, _ast.LessThan, _ast.GreaterEq, _ast.LessEq, 
              _ast.GreaterThan, _ast.Plus, _ast.Land, _ast.Minus, _ast.LConcat]
 def traverse_lor(lor) -> list:
     out = []
-    if type(lor.left) in tree_cond:
-        out.append(traverse_lor(lor.left))
+    if "left" in dir(lor):
+        if type(lor.left) in tree_cond:
+            out.append(traverse_lor(lor.left))
+        else:
+            out.extend(_forward_traverse_condition(lor.left))
+        if type(lor.right) == tree_cond:
+            out.append(traverse_lor(lor.right))
+        else:
+            out.extend(_forward_traverse_condition(lor.right))
     else:
-        out.extend(_forward_traverse_condition(lor.left))
-    if type(lor.right) == tree_cond:
-        out.append(traverse_lor(lor.right))
-    else:
-        out.extend(_forward_traverse_condition(lor.right))
+        for k in lor.children():
+            out.extend(_forward_traverse_generic_block(k))
     return out
 
 def traverse_condition(condition) -> list:
@@ -118,7 +125,13 @@ def traverse_always(always) -> list:
 def traverse_port_list(port_list) -> list:
     port_tree = []
     for port in port_list.ports:
-        port_tree.append(port.name)
+        #print(port)
+        #print(dir(port))
+        if "name" in dir(port):
+            port_tree.append(port.name)
+        else:
+            for k in port.children():
+                port_tree.append(k.name)
     return port_tree
 
 def traverse_decl(decl) -> list:
@@ -136,6 +149,8 @@ def traverse_decl(decl) -> list:
     return decl_tree
 
 def traverse_generic_block(generic):
+    if type(generic) == _ast.Identifier:
+        return traverse_lrvalue(generic)
     if type(generic) == _ast.IfStatement:
         return traverse_if_statement(generic)
     elif type(generic) == _ast.Block:
@@ -164,6 +179,8 @@ def traverse_generic_block(generic):
         return traverse_decl(generic)
     elif type(generic) == _ast.Partselect:
         return []           # TODO: Check
+    elif type(generic) in tree_cond:
+        return traverse_condition(generic)
     report_object(generic)
     assert 0
 
@@ -181,6 +198,11 @@ def traverse_ast(ast):
 def ast_from_file(path:str) -> dict:
     with open(path, "r") as fin:
         ast, directives = parser.parse(fin)
+    return traverse_ast(ast)
+
+def ast_from_str(source:str) -> dict:
+    with StringIO(source) as sstream:
+        ast, directives = parser.parse(sstream)
     return traverse_ast(ast)
 
 if __name__ == "__main__":
