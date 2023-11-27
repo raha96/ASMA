@@ -1,0 +1,4 @@
+# requirements.txt
+
+streamlit~=1.28.2
+
