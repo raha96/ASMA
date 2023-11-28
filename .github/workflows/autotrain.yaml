@@ -19,6 +19,27 @@ jobs:
           sudo apt install iverilog -y
           echo "Installing Python requirements"
           pip install -r requirements.txt
-          echo "Running the training script"
+      - name: Training
           python train.py
+      - name: Upload trained models
+        uses: actions/upload-artifact@v3
+        with:
+          name: good.keras
+          path: models/good.keras
+        uses: actions/upload-artifact@v3
+        with:
+          name: hasfsm.keras
+          path: models/hasfsm.keras
+        uses: actions/upload-artifact@v3
+        with:
+          name: labeled.keras
+          path: models/labeled.keras
+        uses: actions/upload-artifact@v3
+        with:
+          name: sensitivity.keras
+          path: models/sensitivity.keras
+        uses: actions/upload-artifact@v3
+        with:
+          name: transitions.keras
+          path: models/transitions.keras
       - run: echo "Job status is ${{ job.status }}"
