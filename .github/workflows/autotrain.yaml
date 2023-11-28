@@ -1,18 +1,15 @@
 name: Auto-Train
-run-name: ${{ github.actor }} is setting up autotrain using GitHub actions. 
+run-name: Auto-train the models based on the new commit by ${{ github.actor }}.
 on: [push]
 jobs: 
   AutoTrain:
     runs-on: ubuntu-latest
     steps: 
-      - run: echo "Job triggered by ${{ github.event_name }}"
+      - run: echo "Auto-train triggered by ${{ github.event_name }}"
       - run: echo "Runner OS is ${{ runner.os }}; Branch is ${{ github.ref }}; Repository is ${{ github.repository }}"
       - name: Check out code
         uses: actions/checkout@v4
       - run: echo "Repo ${{ github.repository }} cloned. "
-      - run: echo "Listing files at ${{ github.workspace }}"
-      - name: List files
-        run: ls ${{ github.workspace }}
       - name: Environment setup
         run: |
           echo "Installing Icarus Verilog (required by PyVerilog)"
