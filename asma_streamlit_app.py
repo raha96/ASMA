@@ -24,24 +24,12 @@ def remove_comments(input_code: str) -> str:
 
 	return output_code
 
-def normalize_verilog(input_code: str) -> str:
-	# TODO: Replace this function with the actual code for normalizing Verilog
-	return input_code
-
-def add_description_comments(input_code: str) -> str:
-	# TODO: Replace this function with the actual code for adding description comments
-	return input_code
-
-def evaluate_quality_score(input_code: str) -> str:
-	# TODO: Replace this function with the actual code for evaluating the quality score
-	return random.choice(["good", "bad"])
-
 
 # Define the Streamlit app
 def main():
-	st.title("Verilog State Machine Transformer and Assessor")
+	st.title("Automated State Machine Auditor")
 
-	with st.expander("Example Verilog State Machines for Demo"):
+	with st.expander("Example Verilog Code for Demo"):
 		with open(os.path.join('sample', 'gptsample.v'), 'r') as f:
 			ex1 = f.read()
 		st.code(ex1, language="verilog", line_numbers=ENABLE_LINE_NUMBERS)
@@ -52,7 +40,7 @@ def main():
 
 	# TODO: add copy-able sample code snippets
 
-	if st.button("Transform"):
+	if st.button("Audit"):
 		st.subheader("Output")
 		
 		if src_verilog_code:
