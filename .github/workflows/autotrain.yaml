@@ -13,4 +13,12 @@ jobs:
       - run: echo "Listing files at ${{ github.workspace }}"
       - name: List files
         run: ls ${{ github.workspace }}
+      - name: Environment setup
+        run: |
+          echo "Installing Icarus Verilog (required by PyVerilog)"
+          sudo apt install iverilog -y
+          echo "Installing Python requirements"
+          pip install -r requirements.txt
+          echo "Running the training script"
+          python train.py
       - run: echo "Job status is ${{ job.status }}"
