@@ -47,3 +47,5 @@ jobs:
           name: transitions.keras
           path: models/transitions.keras
       - run: echo "Job status is ${{ job.status }}"
+      - name: Training log
+        run: cat action.log
