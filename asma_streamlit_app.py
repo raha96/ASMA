@@ -84,5 +84,25 @@ def main():
 			col_sens.metric(label="Sensitivity list", value="Good" if results["sensitivity"] else "No")
 			col_trans.metric(label="Separated transitions", value="Yes" if results["transitions"] else "No")
 
+			st.divider()
+			num_hints = 0
+			if not results["hasfsm"]:
+				st.write("The provided source code might not contain any state machine, so take these hints with a grain of salt.")
+				num_hints += 1
+			if results["good"]:
+				st.write("The general style is good. Well done!")
+				num_hints += 1
+			if not results["labeled"]:
+				st.write("Labeling the states makes the code more readable.")
+				num_hints += 1
+			if not results["sensitivity"]:
+				st.write("The sensitivity lists would benefit from being better written and more understandable. ")
+				num_hints += 1
+			if not results["transitions"]:
+				st.write("Separating state transitions from output generation makes the code more readable. ")
+				num_hints += 1
+			if num_hints == 0:
+				st.write("We haven't got any hints for you right now, pal.")
+
 if __name__ == "__main__":
 	main()
