@@ -68,7 +68,7 @@ def calc_class_weight(train_y) -> dict:
 
 """# Long version"""
 
-with open("output.pickle", "rb") as fin:
+with open("dataset/output.pickle", "rb") as fin:
     raw_data = pickle.load(fin)
 
 train_in_list, train_out_list = [], []
@@ -167,7 +167,7 @@ print(sklearn.metrics.classification_report(y_true, y_pred))
 # Note that this version only includes records with state machines
 
 def create_dataset(label_name:str, input_layer:int) -> tuple:
-    with open("output.pickle", "rb") as fin:
+    with open("dataset/output.pickle", "rb") as fin:
         raw_data = pickle.load(fin)
     train_in_list, train_out_list = [], []
     test_in_list, test_out_list = [], []
