@@ -1,5 +1,7 @@
 # Custom
 test/
+nohup.out
+*.sh
 
 # pyverilog
 parser.out
