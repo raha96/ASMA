@@ -20,7 +20,7 @@ jobs:
           echo "Installing Python requirements"
           pip install -r requirements.txt
       - name: Training
-          python train.py
+        run: python train.py
       - name: Upload trained model (good.keras)
         uses: actions/upload-artifact@v3
         with:
