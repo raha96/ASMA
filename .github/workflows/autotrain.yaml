@@ -21,23 +21,27 @@ jobs:
           pip install -r requirements.txt
       - name: Training
           python train.py
-      - name: Upload trained models
+      - name: Upload trained model (good.keras)
         uses: actions/upload-artifact@v3
         with:
           name: good.keras
           path: models/good.keras
+      - name: Upload trained model (hasfsm.keras)
         uses: actions/upload-artifact@v3
         with:
           name: hasfsm.keras
           path: models/hasfsm.keras
+      - name: Upload trained model (labeled.keras)
         uses: actions/upload-artifact@v3
         with:
           name: labeled.keras
           path: models/labeled.keras
+      - name: Upload trained model (sensitivity.keras)
         uses: actions/upload-artifact@v3
         with:
           name: sensitivity.keras
           path: models/sensitivity.keras
+      - name: Upload trained model (transitions.keras)
         uses: actions/upload-artifact@v3
         with:
           name: transitions.keras
