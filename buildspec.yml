@@ -1,0 +1,35 @@
+version: 0.2
+
+env:
+  git-credential-helper: yes
+
+phases:
+  install:
+    commands:
+      - apt-get update
+      - apt-get install -y zip
+      - pip install git-remote-codecommit
+
+  pre_build:
+    commands:
+      - echo Starting pre_build stage...
+
+  build:
+    commands:
+      - echo Building the Docker image...
+      - docker build --no-cache -t asma .
+
+      - echo Tagging the Docker image...
+      - docker tag asma:latest 123456789.dkr.ecr.us-east-1.amazonaws.com/asma:latest
+  
+  post_build:
+    commands:
+      - echo Pushing the Docker image to Amazon ECR...
+      - docker push 123456789.dkr.ecr.us-east-1.amazonaws.com/petro_ninja_data:latest
+      - echo Done pushing the Docker image to Amazon ECR...
+
+      - echo Done post_build stage.
+
+# artifacts:
+#   files: 
+#     - '**/*'
